@@ -1,4 +1,4 @@
-# connectFourRobot
+# Connect Four Robot
 Summer Internship Project - Making a Robot play Connect Four
 
 Using Raspberry Pi 5.
