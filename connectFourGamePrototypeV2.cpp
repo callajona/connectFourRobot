@@ -130,7 +130,7 @@ void placeCounter(int player) {
 int winCheck(int player) {
   // Check for a win - return 0 for no win, return player number for win detected
 
-  // -------------------------------- Operation Description ------------------------------------------------------
+  // ------------------------------------ Operation Description ------------------------------------
   // Centred around newest placed counter - Coordinates from global varibles
   // Check each Plane (Horizontal [L+R], vertical [down only], Diagonal [NW-SE], Diagonal [SW-NE])
   // Count no. of adjacent counters that match player number: in both directions [L+R, NW+SE, SW+NE]
