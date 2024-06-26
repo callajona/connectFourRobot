@@ -24,3 +24,32 @@
 
 g++ -g main.cpp -o main -I/usr/include/opencv4 -L/usr/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc
 
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-I/usr/include/opencv4",
+                "-L/usr/lib/",
+                "-lopencv_core",
+                "-lopencv_imgcodecs",
+                "-lopencv_highgui",
+                "-lopencv_imgproc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Generated task by me"
+        }
+    ]
+}
+
