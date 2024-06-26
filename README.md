@@ -10,5 +10,7 @@ Summer Internship Project - Making a Robot play Connect Four
 # Useful links
 
 [Setting up C++ in VS Code on Raspberry Pi (Linux)](https://code.visualstudio.com/docs/cpp/config-linux)
+
 [Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html)
+
 [Connect Four Algorithm Tutorial](http://blog.gamesolver.org/)
