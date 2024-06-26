@@ -21,3 +21,6 @@
         }
     ]
 }
+
+g++ -g main.cpp -o main -I/usr/include/opencv4 -L/usr/lib/ -lopencv_core -lopencv_imgcodecs -lopencv_highgui -lopencv_imgproc
+
