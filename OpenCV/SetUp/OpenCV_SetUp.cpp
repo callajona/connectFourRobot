@@ -1,8 +1,11 @@
+// Simple code to demonstrate that OpenCV is working
+// Must download an image and copy its path and enter it into the image path variable
+
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
 int main() {
-    std::string imagePath = "/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/";
+    std::string imagePath = "/enter/your/path/here"; // Must change this 
     
     cv::Mat image = cv::imread(imagePath);
     if (image.empty()) {
@@ -10,7 +13,7 @@ int main() {
         return 1;
     }
     
-    cv::imshow("Display window", image);
+    cv::imshow("Display Window", image);
     cv::waitKey(0);
     return 0;
 }
