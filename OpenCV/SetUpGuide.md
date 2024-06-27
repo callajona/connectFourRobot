@@ -19,5 +19,6 @@ Ensure that the relevant resources are installed using:
 
 
 # Useful Links
-(Install CMake on Linux)[https://docs.opencv.org/4.x/db/df5/tutorial_linux_gcc_cmake.html]
-(Getting Started with CMake)[https://cmake.org/getting-started/]
+[Install CMake on Linux](https://docs.opencv.org/4.x/db/df5/tutorial_linux_gcc_cmake.html)
+
+[Getting Started with CMake](https://cmake.org/getting-started/)
