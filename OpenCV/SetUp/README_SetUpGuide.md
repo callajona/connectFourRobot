@@ -16,10 +16,10 @@ Ensure that the relevant resources are installed using:
    - Select your CMakeLists.txt file in the correct directory
 - Create c_cpp_properties.json
 - - Ensure the directory has the correct path to the OpenCV header files
-  - Press `F7` to build the code
-  - Press `Shift` + `F5` to run the code without Debugging
+- Press `F7` to build the code
+- Press `Shift` + `F5` to run the code without Debugging
  
-  - To be able to run with Debugging, create a `launch.json` file
+- To be able to run with Debugging, create a `launch.json` file
 
 
 # Useful Links
