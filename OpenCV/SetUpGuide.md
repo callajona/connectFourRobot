@@ -1,24 +1,21 @@
 # Open CV Configuration Guide for CMake
 
+Ensure that the relevent reasorces are installed using:
 
-## CMakeLists.txt
-`cmake_minimum_required(VERSION 3.10)`
+`sudo apt update`
 
-project(MyOpenCVProject)
+`sudo apt install cmake g++ libopencv-dev`
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+### Follow these steps
+- Make a Directory and create a project
+- Create a code file (e.g. main.cpp)
+- Create a CMakeLists.txt file
+- - Ensure the add_executables instruction has the correct path
+- `Ctrl` + `Shift` + `P` to open Command Palette and do `CMake: Configure`
+- Create c_cpp_properties.json
+- - Ensure directory has the correct path to the OpenCV header files
+  - Press `F7` to build the code
+  - Press `Shift` + `F5` to run the code without Debugging
 
-# Find OpenCV package
-find_package(OpenCV REQUIRED)
 
-# Include Directririons
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-
-# Add source files --------------------------------- Change file name and or path
-add_executable(${PROJECT_NAME} main.cpp)
-
-# Link OpenCV libraries
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-
+# Useful Links
