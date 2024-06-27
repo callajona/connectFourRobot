@@ -53,3 +53,19 @@ g++ -g main.cpp -o main -I/usr/include/opencv4 -L/usr/lib/ -lopencv_core -lopenc
     ]
 }
 
+// CMAKE file
+cmake_minimum_required(VERSION 3.10)
+project(MyOpenCVProject)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Find OpenCV package
+find_package(OpenCV REQUIRED)
+
+# Add source files
+add_executable(${PROJECT_NAME} src/main.cpp)
+
+# Link OpenCV libraries
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
