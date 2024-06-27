@@ -2,7 +2,7 @@
 
 
 ## CMakeLists.txt
-`cmake_minimum_required(VERSION 3.10)
+`cmake_minimum_required(VERSION 3.10)`
 
 project(MyOpenCVProject)
 
@@ -21,4 +21,4 @@ add_executable(${PROJECT_NAME} main.cpp)
 
 # Link OpenCV libraries
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
-`
+
