@@ -39,6 +39,9 @@ int main() {
   int player; // declare player variable (Toggles between 1 and 2)
   bool winCondition = false;
 
+  int p1_score = 0;
+  int p2_score = 0;
+
   while (winCondition == false) {
     toggle ^= 1; // Toggle varible to change player
     player = toggle + 1; // Add one to toggle to get player number
@@ -50,7 +53,23 @@ int main() {
     int win = winCheck(player);
     if (win != 0) {
       winCondition = true; // Game won so stop loop
-      cout << "Player " << win << " has won!\n\n";
+      cout << "Player " << win << " has won!\n";
+      cout << "Move List: " << (moveList(0)/10) << "\n\n";
+
+      // Score System
+      if (player == 1) {
+        p1_score++;
+      }
+      else if (player == 2) {
+        p2_score++;
+      }
+      cout << "---SCORE---\n" << "Player 1: " << p1_score << "\nPlayer 2: " << p2_score << "\n\n";
+
+      // Reset Game
+      resetGrid();
+      winCondition = false;
+      cout << "Connect Four!\n";
+      displayGame();
     }
   }
 }
@@ -68,7 +87,7 @@ void displayGrid() {
 void displayColNumbers() {
   // Display the column number above column
   cout << "\n";
-  for (int i = 0; i < 7; i++) {
+  for (int i = 1; i <= 7; i++) {
     cout << i << " ";
   }
   cout << "\n";
@@ -80,15 +99,16 @@ void displayGame() {
   displayGrid();
 }
 
-int selectCol() {
+int selectCol(int player) {
   // Prompt player to select the column to place a counter into 
 
   int column; // Column variable
   bool stopCheck = false; // Varible to continue loop until pass condition met
 
   while (stopCheck == false) { // loop until empty column selected 
-    cout << "Enter a Column to place your Counter: ";
-    cin >> column;
+    cout << "Player " << player << ", select a column: "; // Between 1 and 7
+    cin >> column; 
+    column--; // Decrease column value by 1 to index to 0 for the grid array
 
     if (grid[0][column] != 0) { // Check if column is full
       cout << "Column Full - Please select another column" << endl;
@@ -101,14 +121,20 @@ int selectCol() {
     }
   }
 
+  moveList(column);
   return column;
+}
+int moveList(int column) {
+  int moveList ; // Create varible to store list of moves
+  moveList = (moveList*10) + column; // Add recent move to variable
+  return moveList;
 }
 void placeCounter(int player) {
   // start at bottom of column
   // if grid slot == 0 - place player number into slot
   // else decrement search value
 
-  int column = selectCol(); // Get Column 
+  int column = selectCol(player); // Get Column 
   counter_x = column; // Column = X coordinate of recently placed counter
 
   bool stopCheck = false; // false while lowest zero not found
@@ -129,7 +155,7 @@ void placeCounter(int player) {
 int winCheck(int player) {
   // Check for a win - return 0 for no win, return player number for win detected
 
-  // ------------------------------------ Operation Description ------------------------------------
+  // -------------------------------- Operation Description ------------------------------------------------------
   // Centred around newest placed counter - Coordinates from global varibles
   // Check each Plane (Horizontal [L+R], vertical [down only], Diagonal [NW-SE], Diagonal [SW-NE])
   // Count no. of adjacent counters that match player number: in both directions [L+R, NW+SE, SW+NE]
@@ -290,4 +316,12 @@ int winCheck(int player) {
     }
   }
   return returnVal;
+}
+
+void resetGrid() {
+  for (int i = 0; i < 6; i++) {
+    for (int j = 0; j < 7; j++) {
+      grid[i][j] = 0;
+    }
+  }
 }
