@@ -27,9 +27,13 @@ int grid [6][7] = {
   {0,0,0,0,0,0,0}
 };
 
-// Global variable for the Position of the most recently placed counter
+// Global variables
+// for the Position of the most recently placed counter
 int counter_x;
 int counter_y;
+
+int g_moveList[42]; // Stores list of moves
+int g_turnCounter; // Keeps track of what move the game is on - index 0
 
 int main() {
   cout << " Connect Four!\n";
@@ -54,8 +58,13 @@ int main() {
     if (win != 0) {
       winCondition = true; // Game won so stop loop
       cout << "Player " << win << " has won!\n";
-      cout << "Move List: " << (moveList(0)/10) << "\n\n";
-
+      
+      // Move list display
+      cout << "Move List: ";
+      for (int i = 0; i < g_turnCounter; i++) {
+        cout << g_moveList[i];
+      }
+      
       // Score System
       if (player == 1) {
         p1_score++;
@@ -63,14 +72,20 @@ int main() {
       else if (player == 2) {
         p2_score++;
       }
-      cout << "---SCORE---\n" << "Player 1: " << p1_score << "\nPlayer 2: " << p2_score << "\n\n";
+      cout << "\n\n---SCORE---\n" << "Player 1: " << p1_score << "\nPlayer 2: " << p2_score << "\n\n";
 
       // Reset Game
       resetGrid();
+      g_turnCounter = 0; // reset turn counter
       winCondition = false;
       cout << "Connect Four!\n";
       displayGame();
     }
+    else {
+      g_turnCounter++; // Increment turn counter
+    }
+
+
   }
 }
 
@@ -121,13 +136,11 @@ int selectCol(int player) {
     }
   }
 
-  moveList(column);
+  moveList(column+1); // Increase value by 1 to index to 1 (not index to 0)
   return column;
 }
-int moveList(int column) {
-  int moveList ; // Create varible to store list of moves
-  moveList = (moveList*10) + column; // Add recent move to variable
-  return moveList;
+void moveList(int column) {
+  g_moveList[g_turnCounter] = column; // Add recent move to variable
 }
 void placeCounter(int player) {
   // start at bottom of column
