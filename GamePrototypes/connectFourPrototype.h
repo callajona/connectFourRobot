@@ -5,8 +5,10 @@
 void displayGrid();
 void displayColNumbers();
 void displayGame();
-int selectCol();
+int selectCol(int player);
+void moveList(int column);
 void placeCounter(int player);
 int winCheck(int player);
+void resetGrid();
 
 #endif
