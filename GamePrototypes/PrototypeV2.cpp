@@ -17,16 +17,6 @@
 
 using namespace std;
 
-// Generate Empty Grid for Game
-int grid [6][7] = {
-  {0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0}
-};
-
 // Global variables
 // for the Position of the most recently placed counter
 int counter_x;
@@ -34,6 +24,9 @@ int counter_y;
 
 int g_moveList[42]; // Stores list of moves
 int g_turnCounter; // Keeps track of what move the game is on - index 0
+
+// Generate Empty Grid for Game
+int grid [6][7];
 
 int main() {
   cout << " Connect Four!\n";
@@ -61,7 +54,7 @@ int main() {
       
       // Move list display
       cout << "Move List: ";
-      for (int i = 0; i < g_turnCounter; i++) {
+      for (int i = 0; i <= g_turnCounter; i++) {
         cout << g_moveList[i];
       }
       
@@ -197,7 +190,11 @@ int winCheck(int player) {
       i = 1; // reset index
       stopCheck = false; // reset stopecheck
       while (stopCheck == false) { 
-        if (grid[y][x-i] == player) { // check if adjacent grid slot has the same player number
+        if ((x-1) < 0) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y][x-i] == player) { // check if adjacent grid slot has the same player number
           HCC++; // increment counters counter
           i++; // increment search value
         }
@@ -210,7 +207,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y][x+i] == player) {
+        if ((x+1) > 6) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y][x+i] == player) {
           HCC++;
           i++;
         }
@@ -234,7 +235,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y+i][x] == player) {
+        if ((y+i) > 5) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y+i][x] == player) {
           VCC++;
           i++;
         }
@@ -259,7 +264,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y-i][x-i] == player) {
+        if ((y-i) < 0 || (x-1) < 0) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y-i][x-i] == player) {
           DNWCC++;
           i++;
         }
@@ -272,7 +281,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y+i][x+i] == player) {
+        if ((y+i) > 5 || (x+1) > 6) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y+i][x+i] == player) {
           DNWCC++;
           i++;
         }
@@ -296,7 +309,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y+i][x-i] == player) {
+        if ((y+i) > 5 || (x-1) < 0) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y+i][x-i] == player) {
           DSWCC++;
           i++;
         }
@@ -309,7 +326,11 @@ int winCheck(int player) {
       i = 1;
       stopCheck = false;
       while (stopCheck == false) {
-        if (grid[y-i][x+i] == player) {
+        if ((y-i) < 0 || (x+1) > 6) {
+          // Only search within area of the board - could find a match with the other variables in the continous memory space otherwise
+          stopCheck = true;
+        }
+        else if (grid[y-i][x+i] == player) {
           DSWCC++;
           i++;
         }
@@ -328,6 +349,8 @@ int winCheck(int player) {
       }
     }
   }
+
+  cout << "\nH:" << HCC << " V:" << VCC << " DNW:" << DNWCC << " DSW:" <<  DSWCC << endl;
   return returnVal;
 }
 
