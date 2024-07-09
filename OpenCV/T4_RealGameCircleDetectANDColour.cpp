@@ -13,7 +13,7 @@ using namespace cv;
 bool sortYCoord(const Vec3f &a, const Vec3f &b);
 bool sortXCoord(const Vec3f &a, const Vec3f &b);
 
-// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour6.jpg
+// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourNoBackground.jpg
 // Image1: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour.jpg
 // Image2: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/move4.png
 
@@ -28,8 +28,8 @@ int main(int argc, char** argv)
     int red;
 
     // Import image into code - ENSURE PATH IS CHANGED BEFORE USE
-    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour6.jpg");
-    Mat gray; // Create gray to hold grayscale image
+    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourNoBackground.jpg");
+    
     
     // Check if image is found
     if (!img.data) {
@@ -37,12 +37,39 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    // Image Processing
+    // -------------------------------------------- Image Processing--------------------------------------------
+    
+    // Resize Image
     float SF = 0.5; // Scaling factor
     resize(img, img, Size(), SF, SF, INTER_LINEAR); // Resize image by scaling factor
-    cvtColor(img, gray, COLOR_BGR2GRAY); // Convert img to grayscale
-    //GaussianBlur( gray, gray, Size(9, 9), 2, 2 ); // smooth it, otherwise a lot of false circles may be detected
 
+    // Convert image to greyscale and blur the grayscale image
+    Mat gray, gray_blur; // Create gray to hold grayscale image and gray_blur to hold the blurred gray scale image
+    cvtColor(img, gray, COLOR_BGR2GRAY); // Convert img to grayscale
+    GaussianBlur(gray, gray_blur, Size(9, 9), 2, 2 ); // smooth it, otherwise a lot of false circles may be detected
+
+    // Masking the Board
+    Vec3b hsvPixel(170, 50, 100); // Create a HSV pixel as a vector
+
+    // Threshold Values for each quantity
+    int hue_thresh = 30;
+    int sat_thresh = 50;
+    int val_thresh = 100;
+
+    // Calculate min and max values
+    Scalar minHSV = Scalar(max(0,hsvPixel.val[0] - hue_thresh), max(0,hsvPixel.val[1] - sat_thresh), max(0,hsvPixel.val[2] - val_thresh));
+    Scalar maxHSV = Scalar(min(360,hsvPixel.val[0] + hue_thresh), min(255,hsvPixel.val[1] + sat_thresh), min(255,hsvPixel.val[2] + val_thresh));
+
+    Mat mask, maskedBoard;
+    inRange(img, minHSV, maxHSV, mask);
+    bitwise_and(img, img, maskedBoard, mask);
+
+    /*
+    // Edge detection
+    Mat edge;
+    Canny(maskedBoard,edge,125,150,3,true);
+    */
+     
     // Circle Detection
     vector<Vec3f> circles;
     HoughCircles(gray, circles,HOUGH_GRADIENT,1.55,gray.rows/10,50,40,52,57);
@@ -102,13 +129,16 @@ int main(int argc, char** argv)
     cout << "\n";
 
     // Create window to display image
-    namedWindow( "circles", 1 );
-    imshow( "circles", img );
+    namedWindow( "Image", 1 );
+    imshow( "Image", img );
+    int key = waitKey(0);
 
     // Save image
-    //imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/circleDectect_RealGame_6.jpg",img); 
+    if (key == 's') {
+        imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/realGame_noBackground.jpg",img); 
+        cout << "Image Saved" << endl;
+    }
 
-    waitKey(0);
     return 0;
 }
 
