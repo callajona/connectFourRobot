@@ -14,6 +14,8 @@
 
 [Contour Detection/Shape Detection](https://learnopencv.com/contour-detection-using-opencv-python-c/#What-are-Contours)
 
+[Distance and Shape Detection - Python](https://pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/)
+
 Sorting Algorithm, Circle Detection
 
 ## Camera Set Up
