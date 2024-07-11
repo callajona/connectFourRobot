@@ -12,6 +12,8 @@
 
 [Resizing](https://learnopencv.com/image-resizing-with-opencv/)
 
+[Contour Detection/Shape Detection](https://learnopencv.com/contour-detection-using-opencv-python-c/#What-are-Contours)
+
 Sorting Algorithm, Circle Detection
 
 ## Camera Set Up
