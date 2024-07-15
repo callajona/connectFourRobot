@@ -49,3 +49,4 @@ This should work regardless of focal distance to a reasonable extent
 - [Stack Exchange: OpenCV Blob detection - Circulatity Check](https://stackoverflow.com/questions/42203898/python-opencv-blob-detection-or-circle-detection)
 - [Stack Exchange: Contour Fill](https://stackoverflow.com/questions/72408809/how-do-i-fill-up-mask-holes-in-opencv)
 - [Stack Exchange: HSV Histograms](https://stackoverflow.com/questions/72739316/plotting-hsv-channel-histograms-from-a-bgr-image-opencv)
+- [Stack Exchange: Area of the Largest Contour](https://answers.opencv.org/question/32140/draw-largestrect-contour-on-this-image/)
