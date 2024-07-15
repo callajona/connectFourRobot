@@ -19,3 +19,5 @@ Chosing the Best path in a descision tree
 [Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html)
 
 [Connect Four Algorithm Tutorial](http://blog.gamesolver.org/)
+
+[OpenCV API](https://docs.opencv.org/2.4/index.html)
