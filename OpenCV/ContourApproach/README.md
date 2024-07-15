@@ -35,6 +35,7 @@ This should work regardless of focal distance to a reasonable extent
 ## Useful Links
 ### Contour
 - [OpenCV: Contour Features](https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html)
+- [Histogram Calculation](https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_calculation/histogram_calculation.html)
 
 ### ICP and other such Algorithms 
 - [ICP](https://medium.com/@michaelscheinfeild/icp-iterative-closest-point-algorithm-32ecaf58e9da)
