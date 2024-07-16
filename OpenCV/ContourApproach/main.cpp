@@ -6,6 +6,7 @@
 #include <opencv2/videoio.hpp> // For frame capture?
 #include <math.h>
 #include <algorithm> // For sort
+#include "chrono"
 
 using namespace std;
 using namespace cv;
@@ -17,14 +18,26 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2); // com
 
 Mat BrightnessAndContrast(Mat inputImg, float contrast, int brightness);
 
-// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground2.jpg
+// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground3.jpg
 // Image1: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour.jpg
 // Image2: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/move4.png
 
 int main(int argc, char** argv) 
 {
+    const auto start{std::chrono::steady_clock::now()}; // Start Clock
+
+    int gameState[42];
+    int actual_gameState[42] = {
+        0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,
+        0,0,2,1,2,2,1,
+        1,0,1,2,1,1,2,
+        2,1,2,1,2,2,1,
+        1,2,2,1,1,2,1
+        };
+
     // -------------------------------------------- Import Image --------------------------------------------
-    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground.jpg");
+    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground3.jpg");
     
     // Check if image is found
     if (!img.data) {
@@ -39,8 +52,7 @@ int main(int argc, char** argv)
     resize(img, img, Size(), SF, SF, INTER_LINEAR); // Resize image by scaling factor
     //imshow("Image",img); waitKey(0);
 
-    // Change the brightness and contrast of the image
-    //img = BrightnessAndContrast(img,1,60);
+    //img = BrightnessAndContrast(img,1,60); // Change the brightness and contrast of the image
 
     // ----------------------------- Masking the Board ---------------------------------------------
     // HSV = Hue, Saturation, Value
@@ -79,16 +91,22 @@ int main(int argc, char** argv)
     //Mat boarder_img = img.clone(); drawContours(boarder_img, contours,contours.size()-1, Scalar( 0, 255, 0 ), 2 ); // Draw the largest contour using largest stored index.
     //imshow("Boarder",boarder_img); waitKey(0); // Display the largest contour = boarder of the game 
 
+    for (int i = 0; i < contours.size(); i++) {
+        cout << contourArea(contours[i]) << endl;
+    }
+
     // Remove elements in counters array that aren't the counters
     // - Lower bound removes noise
     // - Upper bound removes the boarder
     for (int i = 0; i < contours.size(); i++) {
         float area = contourArea(contours[i]); // Calculate area of the contour
-        if (area < 8000 || area > 12000) {
+        if (area < 5000 || area > 12000) {
             contours.erase(contours.begin() + i); // Remove out of range element
             i--; // Removed element so all elements have shifted back, so need to research the previous element; therfore, decrease i
         }
     }
+
+    cout << "Number of Circles: " << contours.size() << endl;
 
     // --Further Processing--
     // if (contours.size() == 42) {// No further processing;} else {// Do circularity check to remove non circular contours;}
@@ -104,7 +122,7 @@ int main(int argc, char** argv)
         minEnclosingCircle(contours[i],centre,radius); // Find the Minimum enclosing circle around the points - gives radius and centre point
         centrePoints.insert(centrePoints.begin() + i, centre); // add centre point to array
     }
-
+    
     // Sort Circles
     sort(centrePoints.begin(), centrePoints.end(), sortYCoord); // Sort all vectors based on y-coordinates (rows still scrambled: e.g. 3 2 1; 4 6 5; 9 7 8)
     for (int i = 0; i < 6; i++) {
@@ -127,8 +145,6 @@ int main(int argc, char** argv)
     Vec3b pixHSV;
     int H, S, V;
 
-    Mat colouredCircles = img.clone();
-
     for (int i = 0; i < centrePoints.size(); i++) {
         pixHSV = HSV_img.at<Vec3b>(centrePoints[i]); // Get the HSV values at the centre points of the circle
         
@@ -139,24 +155,49 @@ int main(int argc, char** argv)
 
         // Detect Colours
         if (((H >= 170 && H <= 179) || (H >= 0 && H <= 12)) && (S >= 51 && S <=255) && (V >=77 && V <= 255)) {
-            circle(colouredCircles, centrePoints[i], 10, Scalar(0,0,255), -1, 8, 0 ); // draw the circle center - red when counter is red
-            cout << i << " = red" << endl;
+            gameState[i] = 1;
         }
         else if ((H >= 18 && H <= 40) && (S >= 51 && S <=255) && (V >=102 && V <= 255)) {
-            circle(colouredCircles, centrePoints[i], 10, Scalar(0,255,255), -1, 8, 0 ); // draw the circle center - Yellow when counter is yellow
-            cout << i << " = Yellow" << endl;
+            gameState[i] = 2;
         }
         else {
-            circle(colouredCircles, centrePoints[i], 10, Scalar(0,0,0), -1, 8, 0 ); // draw the circle center - Yellow when counter is yellow
-            cout << i << " = Blank" << endl;
+            gameState[i] = 0;
         }
-
-        circle(colouredCircles,centrePoints[i], radius, Scalar(255,0,0), 3, 8, 0 ); // draw the circle outline
     }
 
-    imshow("Coloured Circles",colouredCircles); waitKey(0);
+    // Display Game State in Terminal
+    for (int i = 1; i <= 7; i++) {
+        cout << i << " "; // Display Column numbers
+    }
+    cout << "\n";
+
+    // Display individual cells
+    for (int i = 0; i < 6; i++) {
+        for (int j = 0; j < 7; j++) {
+            cout << gameState[j+(i*7)] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+
+    // Comapre to actual state of the game and check for errors
+    bool errorCheck = false;
+    for (int i = 0; i < 42; i++) {
+        if (gameState[i] != actual_gameState[i]) {
+            cout << "Error in postion: " << i << endl;
+            errorCheck = true;
+        }
+    }
+
+    if (errorCheck == false) {
+        cout << "Board Correctly Identified" << endl;
+    }
 
     //imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/CA_ColouredCircles_CorrectlyIdentified.jpg",colouredCircles);
+
+    const auto end{std::chrono::steady_clock::now()}; // end Clock
+    const std::chrono::duration<double> elapsed_seconds{end - start};
+    cout << "Duration Time: " << elapsed_seconds.count() << endl;
 
     return 0;
 }
