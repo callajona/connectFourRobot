@@ -31,13 +31,21 @@ When 42 Circles Found:
 - Calculate focal length
 - Scale allowable area size range
 
-#### Next Questions
+## Picture Scaling
+- Do all steps to get Contour!
+- Find pixel width of the board - unscaled image
+- Scale the image to put the board in a good operating range.
+- Redo the contour detection on new image
+
+Only do this once at the start then keep the scale factor the same. If the pixel depth massively changes, recalibrate the scale factor.
+
+## Next Questions
 - Has the game state changed?
   - No: Time delay, run code again
   - Yes: Capture again to ensure the state is static – falling discs may cause problems
     - When static state found - run algorithm to calculate next best move
 
-*Could find things outside of the board. Solution large background that fills the image or crop image to isolate the board.
+*Could find things outside of the board. Solution large background that fills the image or crop image to isolate the board. Better solution: Heierarchy of contours refers to nested contours. Only look at contours nested within the board outline
 
 ** Exact cutoff points should depend on the focal length (distance from the camera to the board), the angle of the camera and distortion. If necessary, make these cutoff points dependent on the focal length [measure the length of the top side of the board edge (largest contour), compare to actual measured length of the board to calculate the focal length]. 
 
