@@ -14,7 +14,10 @@ Choosing the Best path in a decision tree
 # Next steps
 - Camera capture in code
 - Solving algorithm implementation
-- Top-level code design
+- Top-level code design - I/O flow
+- Change detection
+- Scaling factor adjustment
+- Optimise algorithm - nest circle check in area check. Area check passed --> Circle Check
 
 # Useful links
 
