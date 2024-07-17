@@ -6,7 +6,7 @@
 #include <opencv2/videoio.hpp> // For frame capture?
 #include <math.h>
 #include <algorithm> // For sort
-#include "chrono"
+#include "chrono" // For time tracking
 
 using namespace std;
 using namespace cv;
@@ -18,7 +18,7 @@ bool compareContourAreas(vector<Point> contour1, vector<Point> contour2); // com
 
 Mat BrightnessAndContrast(Mat inputImg, float contrast, int brightness);
 
-// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground3.jpg
+// Get image: rpicam-jpeg --output /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour_cameraDistanceTest2.jpg
 // Image1: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour.jpg
 // Image2: /home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/move4.png
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
         };
 
     // -------------------------------------------- Import Image --------------------------------------------
-    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFourWhiteBackground3.jpg");
+    Mat img = imread("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/connectFour_cameraDistanceTest2.jpg");
     
     // Check if image is found
     if (!img.data) {
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     // Resize Image
     float SF = 0.5; // Scaling factor
     resize(img, img, Size(), SF, SF, INTER_LINEAR); // Resize image by scaling factor
-    //imshow("Image",img); waitKey(0);
+    imshow("Image",img); waitKey(0);
 
     // ----------------------------- Masking the Board ---------------------------------------------
     // HSV = Hue, Saturation, Value
@@ -62,17 +62,17 @@ int main(int argc, char** argv)
     cvtColor(img,HSV_img,COLOR_BGR2HSV); // Convert Image to HSV space 
     
     // Set upper and lower bounds to mask
-    Scalar minHSV = Scalar(90,85,60);
+    Scalar minHSV = Scalar(107,85,60);
     Scalar maxHSV = Scalar(135,255,255);
 
     // Mask out the board
     Mat mask, maskedBoard;
     inRange(HSV_img, minHSV, maxHSV, mask); // Create board mask by checking if HSV img has pixel in specified range
     bitwise_and(HSV_img, HSV_img, maskedBoard, mask); // Use mask to remove everything else from the image
-    //imshow("Mask",mask); waitKey(0); // Display the mask
+    imshow("Mask",mask); waitKey(0); // Display the mask
 
     Mat BGR_maskedBoard; cvtColor(maskedBoard,BGR_maskedBoard,COLOR_HSV2BGR); // Convert the HSV masked image back into BGR
-    //imshow("Origional",BGR_maskedBoard); waitKey(0);
+    imshow("Origional",BGR_maskedBoard); waitKey(0); // Display masked out board
 
     // -----------------------------Contour-----------------------------
     vector<vector<Point>> contours;
@@ -80,101 +80,89 @@ int main(int argc, char** argv)
     findContours(mask.clone(), contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE); // Detect the contours
 
     Mat contour_img = img.clone(); drawContours(contour_img, contours, -1, Scalar(0,255,0), 2); // Draw contours on the original image
-    //imshow("Contours",contour_img); waitKey(0);
+    imshow("Contours",contour_img); waitKey(0);
 
     sort(contours.begin(), contours.end(), compareContourAreas); // sort contours
 
-    Rect GameBoard = boundingRect(contours[contours.size()-1]); // Find the rectangle encapsluating the largest contour = boarder
+    // -----------------------------Process the Contours-----------------------------
+    // Remove elements in contours array that aren't the counters
 
-    RotatedRect rotatedRectBoard = minAreaRect(contours[contours.size()-1]); // NOT A ROTATE RECT
-    Point2f boardCorners[4];
-    rotatedRectBoard.points(boardCorners);
-
-    for (int i = 0; i < 4; i++) {
-        cout << boardCorners[i] << endl;
-        circle(img, boardCorners[i], 10, Scalar(0,0,0), -1, 8, 0 ); // draw board corners
-    }
-    
-    //Mat croppedGameBoard = img(GameBoard); // Crop image to size of largest contour rectangle - outline of game board
-    //Mat boarder_img = img.clone(); drawContours(boarder_img, contours,contours.size()-1, Scalar( 0, 255, 0 ), 2 ); // Draw the largest contour using largest stored index.
-    //imshow("Boarder",boarder_img); waitKey(0); // Display the largest contour = boarder of the game 
-
-    /*
-    sort(contours.begin(), contours.end(), compareContourAreas); // sort contours
-
-    for (int i = 0; i < contours.size(); i++) {
-        cout << contourArea(contours[i]) << endl; // Output area of each contour
-    }
-
-    // Remove elements in counters array that aren't the counters
+    // Remove very large or very small contours
     // - Lower bound removes noise
     // - Upper bound removes the boarder
     for (int i = 0; i < contours.size(); i++) {
         float area = contourArea(contours[i]); // Calculate area of the contour
-        if (area < 5000 || area > 20000) {
+        if (area < 1000 || area > 20000) {
             contours.erase(contours.begin() + i); // Remove out of range element
-            i--; // Removed element so all elements have shifted back, so need to research the previous element; therfore, decrease i
+            i--; // Decrease i to resarch index as element has been removed, so vector shifts back
         }
     }
-
-    cout << "Number of Circles: " << contours.size() << endl;
 
     Mat counterContour_img = img.clone(); drawContours(counterContour_img, contours, -1, Scalar(0,255,0), 2); // Draw counter contours on the original image
     imshow("Counter Contours",counterContour_img); waitKey(0);
 
-    //imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/CA_tooManyContours.jpg",counterContour_img);
+    // Remove non circular contours
+    float perimeter;
+    float area; 
+    float circularity;
 
-    // Check if 42 counters are found
+    for (int i = 0; i < contours.size(); i++) {
+        perimeter = arcLength(contours[i], true); // Find perimeter of closed shape - true determines closed shape
+        area = contourArea(contours[i]); // Find area
+        circularity = 4*M_PI*(area /(perimeter*perimeter)); // Calculate a circularity
+        //cout << i << ": " << circularity << endl;
+
+        if (circularity < 0.3 || circularity > 1) {
+            contours.erase(contours.begin() + i); // Remove out of range element
+            //cout << "Circularity beign deleted: " << circularity << endl;
+            i--; // Decrease i to resarch index as element has been removed, so vector shifts back
+        }
+    }
+               
+    Mat counterContour2_img = img.clone(); drawContours(counterContour2_img, contours, -1, Scalar(0,255,0), 2); // Draw counter contours on the original image
+    imshow("Counter Contours",counterContour2_img); waitKey(0);
+
     if (contours.size() != 42) {
-        bool stopCheck = false;
-
-        // Elimiante out of range contours
-        // Check if in grid formation - elimnate too close together objects
-
-        while (stopCheck == false) {
-            // exclude non circular contours
-            float perimeter;
-            float area; 
-            float circularity;
-
-            for (int i = 0; i < contours.size(); i++) {
-                perimeter = arcLength(contours[i], true); // Find perimeter of closed shape - true determines closed shape
-                area = contourArea(contours[i]);
-                circularity = 4*M_PI*(area /(perimeter*perimeter));
-                cout << circularity << endl;
-                if (circularity < 0.6 || circularity > 1) {
-                    contours.erase(contours.begin() + i); // Remove out of range element
-                    i--; // Removed element so all elements have shifted back, so need to research the previous element; therfore, decrease i
-                }
-            }
-
-            if (contours.size() == 42) {
-                // End further processing if all 42 circles are identified
-                stopCheck = true;
-            }
-        }        
+        cerr << "Error: Incorrect number of circles!" << endl;
+        return -1;
     }
 
-
-    /*
+    // -----------------------------Circile Centre points-----------------------------
     // Find Centre points of contours using the Minimum Enclosing Circle function
+
     Point2f centre;
     float radius;
     vector<Point> centrePoints; // Vector to store centre points - Point data type to round centre values
+
     for (int i = 0; i < contours.size(); i++) {
         minEnclosingCircle(contours[i],centre,radius); // Find the Minimum enclosing circle around the points - gives radius and centre point
         centrePoints.insert(centrePoints.begin() + i, centre); // add centre point to array
     }
     
-    // Sort Circles
+    // Sort Circles based on centre points
     sort(centrePoints.begin(), centrePoints.end(), sortYCoord); // Sort all vectors based on y-coordinates (rows still scrambled: e.g. 3 2 1; 4 6 5; 9 7 8)
     for (int i = 0; i < 6; i++) {
         sort(centrePoints.begin() + (i*7), centrePoints.begin() +7 + (i*7),sortXCoord); // Sort each row
     }
 
+    // Display the Fitted circles
+    Mat fittedCircles = img.clone();
+    for (int i = 0; i < centrePoints.size(); i++) {
+        //cout << i << " - Centre: " << centrePoints[i] << endl; // output centre points to terminal
+
+        // Draw the circles onto the image
+        circle(fittedCircles, centrePoints[i], i, Scalar(0,0,0), -1, 8, 0 ); // draw the circle center
+        circle(fittedCircles, centrePoints[i], radius, Scalar(255,0,0), 3, 8, 0 ); // draw the circle outline
+    }
+    imshow("Sorted Circles", fittedCircles); waitKey(0);
+
+    // -----------------------------Colour Detection-----------------------------
     // Detect colours in centre of circles
+    
     Vec3b pixHSV;
     int H, S, V;
+
+    Mat finalImg = img.clone();
 
     for (int i = 0; i < centrePoints.size(); i++) {
         pixHSV = HSV_img.at<Vec3b>(centrePoints[i]); // Get the HSV values at the centre points of the circle
@@ -187,16 +175,24 @@ int main(int argc, char** argv)
         // Detect Colours
         if (((H >= 170 && H <= 179) || (H >= 0 && H <= 12)) && (S >= 51 && S <=255) && (V >=77 && V <= 255)) {
             gameState[i] = 1;
+            circle(finalImg, centrePoints[i], 5, Scalar(0,0,255), -1, 8, 0 ); // draw the centre point - red
         }
         else if ((H >= 18 && H <= 40) && (S >= 51 && S <=255) && (V >=102 && V <= 255)) {
             gameState[i] = 2;
+            circle(finalImg, centrePoints[i], 5, Scalar(0,255,255), -1, 8, 0 ); // draw the centre point - Yellow
         }
         else {
             gameState[i] = 0;
+            circle(finalImg, centrePoints[i], 5, Scalar(0,0,0), -1, 8, 0 ); // draw the centre point - Black
         }
+
+        circle(finalImg, centrePoints[i], radius, Scalar(255,0,0), 3, 8, 0 ); // draw the outline circle
     }
 
-    // Display Game State in Terminal
+    imshow("Sorted Circles", finalImg); waitKey(0); // Display final Image
+
+    // -----------------------------Display Game State in Terminal-----------------------------
+    // Display Column Numbers
     for (int i = 1; i <= 7; i++) {
         cout << i << " "; // Display Column numbers
     }
@@ -226,8 +222,7 @@ int main(int argc, char** argv)
 
     //imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/CA_ColouredCircles_CorrectlyIdentified.jpg",colouredCircles);
 
-    */
-
+    /* */
     const auto end{std::chrono::steady_clock::now()}; // end Clock
     const std::chrono::duration<double> elapsed_seconds{end - start};
     cout << "Duration Time: " << elapsed_seconds.count() << endl;
