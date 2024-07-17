@@ -262,34 +262,3 @@ Mat BrightnessAndContrast(Mat inputImg, float contrast, int brightness) {
     }
     return outputImg;
 }
-
-/*
-    // ------------------Masking out the counter colours------------------
-
-    Scalar redMinHSV = Scalar(170,51,77); // [H: 0, S: 0.2, V: 0.3]
-    Scalar redMaxHSV = Scalar(179,255,255); // [H: 12, S: 1, V: 1]
-
-    Scalar yelMinHSV = Scalar(18,51,102); // [H: 36, S: 0.2, V: 0.4]
-    Scalar yelMaxHSV = Scalar(40,255,255); // [H: 74, S: 1, V: 1]
-
-    // Mask Red
-    Mat redMask, redImg;
-    inRange(HSV_img,redMinHSV,redMaxHSV,redMask); // Create red mask
-    bitwise_and(HSV_img, HSV_img, redImg, redMask); // Apply red mask
-    Mat BGR_redImg; cvtColor(redImg,BGR_redImg,COLOR_HSV2BGR); // convert masked image to BGR to be displayed
-    //imshow("Red Mask",BGR_redImg); waitKey(0); // 
-
-    // Mask Yelow
-    Mat yelMask, yelImg;
-    inRange(HSV_img,yelMinHSV,yelMaxHSV,yelMask); // create yellow mask
-    bitwise_and(HSV_img, HSV_img, yelImg, yelMask); // Apply yellow mask
-    Mat BGR_yelImg; cvtColor(yelImg,BGR_yelImg,COLOR_HSV2BGR); // Convert masked image to BGR to be displayed
-    //imshow("Yellow Mask",BGR_yelImg); waitKey(0); // Display just yellow circles
-
-    // Combine Masks
-    Mat redYelMask, outputImg;
-    bitwise_or(yelMask,redMask,redYelMask); // Combine two masks
-    bitwise_and(HSV_img, HSV_img, outputImg, redYelMask); // Mask image using combined mask
-    Mat BGR_bothMasks; cvtColor(outputImg,BGR_bothMasks,COLOR_HSV2BGR); // Convert masked image to BGR to be diplayed
-    imshow("Both Masks",BGR_bothMasks); waitKey(0);
-    */
