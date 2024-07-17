@@ -1,5 +1,5 @@
 # Connect Four Robot
-Summer Internship Project - Making a Robot play Connect Four
+Summer Internship Project - Making a Robot Play Connect Four
 
 
 ## Overview
@@ -9,8 +9,12 @@ Summer Internship Project - Making a Robot play Connect Four
 - Robot used to enact the move
 
 # How the Algorithm Works
-Chosing the Best path in a descision tree
+Choosing the Best path in a decision tree
 
+# Next steps
+- Camera capture in code
+- Solving algorithm implementation
+- Top-level code design
 
 # Useful links
 
