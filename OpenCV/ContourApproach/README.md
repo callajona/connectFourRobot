@@ -2,7 +2,7 @@
 
 ## Goal 
 To detect the "state" of a game of Connect Four. State is referring to the contents of each game slot (empty, red, or yellow).
-Idea: Find the board in the image by masking the blue. Detect the circles with contour detection. Find the centre points and detect the colours. 
+Idea: Find the board in the image by masking the blue. Detect the circles in the mask with contour detection. Find the centre points and detect the colours. 
 This should work regardless of focal distance to a reasonable extent
 
 ## Explanation
@@ -11,15 +11,25 @@ This should work regardless of focal distance to a reasonable extent
   - Largest contour = Board perimeter*
   - Smallest contours = noise
   - Middle contours = slots / larger noise
-- Truncate contour list to include middle contours**
-- Isolate slots with circulatory fitting. Only accept the most circular contours
-  - If all 42 circles found:
-    - Find centre coordinates
-    - Order the coordinates
-  - Else:
-    - Figure out where other circles should be (ICP algorithm)
+- Eliminate incorrect Contours
+  - Delete smallest and largest
+  - Delete contours outside of game border
+  - Delete non-circular contours
+  - Delete contours that are too close 
+- Check if 42 circles found
+    - If too few: Figure out where other circles should be (ICP algorithm)
+    - Or iterative algorithm that shifts the range values based on distance to game***
+ 
+When 42 Circles Found:
+- Use fitting to find circle around contours - provides centre point
 - Detect colours within circles – Average of multiple points?
 - Obvious error check (colour on top of blank)
+
+## Distance Calculation
+- Find the length of the top of the board in the image (bounding Rectangle/ turning points of contour)
+- Compare to known length
+- Calculate focal length
+- Scale allowable area size range
 
 #### Next Questions
 - Has the game state changed?
@@ -30,6 +40,8 @@ This should work regardless of focal distance to a reasonable extent
 *Could find things outside of the board. Solution large background that fills the image or crop image to isolate the board.
 
 ** Exact cutoff points should depend on the focal length (distance from the camera to the board), the angle of the camera and distortion. If necessary, make these cutoff points dependent on the focal length [measure the length of the top side of the board edge (largest contour), compare to actual measured length of the board to calculate the focal length]. 
+
+*** The size of the contours will change based on distance. Colours will change based on lighting conditions. Circularity of the slots will change based on camera angle and position.
 
 
 ## Useful Links
