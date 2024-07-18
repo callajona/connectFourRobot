@@ -56,13 +56,16 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    //GS_Analysis_Demo(img); // connectFour6.jpg - best for demo
-    //GS_Analysis(img);
-    //GS_display();
-    //GS_Check();
-    //GS_errorCheck();
+    //float SF = 0.5; // Scaling factor
+    //resize(img, img, Size(), SF, SF, INTER_LINEAR); // Resize image by scaling factor
 
-    calibrateImgScaleFactor(img);
+    //GS_Analysis_Demo(img); // connectFour6.jpg - best for demo
+    GS_Analysis(img);
+    GS_display();
+    GS_Check();
+    GS_errorCheck();
+
+    //float SF = calibrateImgScaleFactor(img);
 
     const auto end{std::chrono::steady_clock::now()}; // end Clock
     const std::chrono::duration<double> elapsed_seconds{end - start};
@@ -219,7 +222,7 @@ Mat BrightnessAndContrast(Mat inputImg, float contrast, int brightness) {
 void GS_Analysis_Demo(Mat img) {
     // --------------------------------- Slower and less efficient Game State Analysis - displays each step ---------------------------------
     // Resize Image
-    float SF = 0.4; // Scaling factor
+    float SF = 1; // Scaling factor
     resize(img, img, Size(), SF, SF, INTER_LINEAR); // Resize image by scaling factor
     imshow("Resized Image",img); waitKey(0);
 
@@ -255,7 +258,7 @@ void GS_Analysis_Demo(Mat img) {
     Mat contour_img = img.clone(); drawContours(contour_img, contours, -1, Scalar(0,255,0), 2); // Draw contours on the original image
     imshow("Contours Detected",contour_img); waitKey(0); // Display the contours
 
-    //sort(contours.begin(), contours.end(), compareContourAreas); // sort contours
+    sort(contours.begin(), contours.end(), compareContourAreas); // sort contours
 
     // -----------------------------Process the Contours-----------------------------
     // Remove elements in contours array that aren't the counters
@@ -265,7 +268,8 @@ void GS_Analysis_Demo(Mat img) {
     // - Upper bound removes the boarder
     for (int i = 0; i < contours.size(); i++) {
         float area = contourArea(contours[i]); // Calculate area of the contour
-        if (area < 1000 || area > 20000) {
+        cout << "Area = " << area << endl;
+        if (area < 2000 || area > 20000) {
             contours.erase(contours.begin() + i); // Remove out of range element
             i--; // Decrease i to resarch index as element has been removed, so vector shifts back
         }
@@ -536,6 +540,11 @@ int calibrateImgScaleFactor(Mat img) {
     // - Isolate the correct corner points (TL and TR)
     // - Find the distance between them (Pythagoras)
     // - Use this pixel width to calculate a scaling factor
+    //      - Board width = 260mm
+    //      - Counter Apature Diameter = 26mm
+    //      - Divide BW by 10 --> Counter Apature Pixel Diameter
+    //      - Use to find pixel diameter of counters --> Pixel area
+    //      - Scale image to make area consistent
 
     // -------------------------------------------- Masking the Board --------------------------------------------
     Mat HSV_img;
@@ -596,6 +605,18 @@ int calibrateImgScaleFactor(Mat img) {
     float pythag_w = abs((TRcorner.x - TLcorner.x)); // Work out the width of the triangle
     float pythag_h = abs((TRcorner.y - TLcorner.y)); // Work out the height of the triangle
     float pixBoardWidth = sqrt((pythag_w*pythag_w) + (pythag_h*pythag_h)); // Calculate the disntance between the corners using pythagoras
+
+    float pixCounterArea = M_PI * ((pixBoardWidth / 10) / 2) * ((pixBoardWidth / 10) / 2);
+
+    cout << "Pixel Width: " << pixBoardWidth << " pixels" << endl;
+    cout << "Pixel Counter Area: " << pixCounterArea << " pixels" << endl;
+
+    // Calcualted: 41,000
+    // Lowest: 30,000
+    // Highest: 44,000
+    // Tolerance: 30
+    
+    /*
     cout << "Pixel Width: " << pixBoardWidth << " pixels" << endl;
 
     // Draw found corners onto image
@@ -603,6 +624,7 @@ int calibrateImgScaleFactor(Mat img) {
     circle(img, TRcorner, 10, Scalar(255,0,0), 3, 8, 0 ); // draw Top-Right corner
     imshow("Corners Identified",img); waitKey(0); // Display corners
     //imwrite("/home/project/projects/ConnectFourProject/OpenCV/my_cpp_project/src/Images/SFcalibration_CornersDetect.jpg",img);
+    */
 
     return 0;
 }
