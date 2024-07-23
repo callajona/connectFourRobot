@@ -27,4 +27,6 @@ Choosing the Best path in a decision tree
 
 [Connect Four Algorithm Tutorial](http://blog.gamesolver.org/)
 
+[Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file)
+
 [OpenCV API](https://docs.opencv.org/2.4/index.html)
