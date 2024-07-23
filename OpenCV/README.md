@@ -29,3 +29,5 @@ Camera Module 3
 [Software Documentation](https://www.raspberrypi.com/documentation/computers/camera_software.html)
 
 [Hardware Documentation](https://www.raspberrypi.com/documentation/accessories/camera.html#install-a-raspberry-pi-camera)
+
+[OpenCV: VideoCapture](https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCapture.html#a57c0e81e83e60f36c83027dc2a188e80)
