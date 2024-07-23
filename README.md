@@ -29,4 +29,6 @@ Choosing the Best path in a decision tree
 
 [Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file)
 
+[Unbeatable AI](https://lelserslasers.itch.io/connect-4-minimax)
+
 [OpenCV API](https://docs.opencv.org/2.4/index.html)
