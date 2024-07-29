@@ -67,7 +67,6 @@ int main(int argc, char** argv) {
       for (int i_3 = 0; i_3 < 7; i_3++) {
         for (int i_4 = 0; i_4 < 7; i_4++) {
           for (int i_5 = 0; i_5 < 7; i_5++) {
-
             std::string move = colNumbers[i_1] + colNumbers[i_2] + colNumbers[i_3] + colNumbers[i_4] + colNumbers[i_5]; // Create the move
 
             // Convert move to bitmap 
@@ -104,11 +103,10 @@ int main(int argc, char** argv) {
 
             // Compare the bitmaps
             std::string matching_move, matching_Flipped_move;
-            matching_move = readLUT_compareBitmap(bitmap_srt, 4);// Compare normal bitmap - find a matching move
-            matching_Flipped_move = readLUT_compareBitmap(flipped_bitmap_srt, 4); // Compare flipped bitmap - find a flipped matching move
+            matching_move = readLUT_compareBitmap(bitmap_srt, 5);// Compare normal bitmap - find a matching move
+            matching_Flipped_move = readLUT_compareBitmap(flipped_bitmap_srt, 5); // Compare flipped bitmap - find a flipped matching move
 
             // If a match is found - grab the score from relevent line
-
             if (matching_Flipped_move != "X" && matching_move != "X") {both++;}
             if (matching_move != "X") {match_count++;}
             if (matching_Flipped_move != "X") {flip_count++;}
@@ -141,8 +139,8 @@ int main(int argc, char** argv) {
             for (int i = 0; i < 6; i++) {
               MyFile << colScores[i] << " ";
             }
-            MyFile << colScores[6] << "]" << std::endl;          
-          }
+            MyFile << colScores[6] << "]" << std::endl;  
+          }        
         } 
       }
     }
@@ -213,6 +211,7 @@ std::string readLUT_compareBitmap(std::string bitMaptoCompare, int LUT) {
 
     if (bitmapInFile == bitMaptoCompare) { // Compare the bitmaps to check if any match
       moveOutput = readLine.substr((0),LUT); // Get the bitmap on a line
+      //std::cout << moveOutput << std::endl;
     }  
   }
 
