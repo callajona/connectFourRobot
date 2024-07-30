@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
               colScores = readLUT(matching_move);
             }
             else if (matching_Flipped_move != "X") {
-              colScores = readLUT(matching_move);
+              colScores = readLUT(matching_Flipped_move);
               std::vector<int> flippedScore = {0,0,0,0,0,0,0};
               int j = 6;
 
