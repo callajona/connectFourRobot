@@ -2,7 +2,7 @@
 Summer Internship Project - Making a Robot Play Connect Four
 
 
-## Overview
+## System Overview
 The system is split into three main areas:
 - Computer Vision - Tracks the state of the game
 - Solving Algorithm - Determines the next move to play
@@ -33,16 +33,31 @@ Look-Up Tables: Look up tables were created as the algorithm was too slow when t
 
 
 # How the Computer Vision Works
+Aim: Identify the State of the board <br> 
 
+### Method: 
+- Apply mask to image to isolate the board (Blue mask)
+- Detect contours (Sudden changes in pixel values = edges)
+- Eliminate incorrect Contours
+  - Delete smallest and largest (Noise and the board outline)
+  - Delete contours outside of game border 
+  - Delete non-circular contours
+  - Delete contours that are too close together
+- Check if 42 circles found
+  - If too few: Figure out where other circles should be (ICP algorithm)
+  - Or iterative algorithm that shifts the range values based on distance to game***
+
+When 42 Circles Found:
+
+- Use fitting to find circle around contours - provides centre point
+- Detect colours within circles – Average of multiple points?
+- Produce a game state array 
+- Obvious error check (colour on top of blank)
+<br>
 
 # Useful links
-
-[Setting up C++ in VS Code on Raspberry Pi (Linux)](https://code.visualstudio.com/docs/cpp/config-linux)
-
-[Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html)
-
-[Connect Four Algorithm Tutorial](http://blog.gamesolver.org/)
-
-[Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file)
-
-[OpenCV API](https://docs.opencv.org/2.4/index.html)
+[Setting up C++ in VS Code on Raspberry Pi (Linux)](https://code.visualstudio.com/docs/cpp/config-linux) <br>
+[Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html) <br>
+[Connect Four Algorithm Tutorial](http://blog.gamesolver.org/) <br>
+[Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file) <br>
+[OpenCV API](https://docs.opencv.org/2.4/index.html) <br>
