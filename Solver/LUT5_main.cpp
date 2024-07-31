@@ -45,7 +45,8 @@ using namespace GameSolver::Connect4;
 int main(int argc, char** argv) {
 
   // Create and open a text file
-  std::ofstream MyFile("/home/project/projects/Solver_Pascal/LUT/LUT_5.txt"); // Destructive!
+  std::ofstream MyFile;
+  MyFile.open("/home/project/projects/Solver_Pascal/LUT/LUT_5.txt",std::ios::app); // std::ios::app - non destrictive writing [app = append mode]
 
   Solver solver; // Create an object
 
@@ -53,13 +54,8 @@ int main(int argc, char** argv) {
 
   std::string colNumbers[7] = {"1","2","3","4","5","6","7"}; // Column numbers as strings
   std::vector<int> colScores = {0,0,0,0,0,0,0}; // Vector containing the column scores
-  //std::vector<int> rankedCols;
 
   int transpose_flip[7] = {6,4,2,0,-2,-4,-6}; // transposition matrix to flip the bitmap board
-
-  int match_count = 0;
-  int flip_count = 0;
-  int both = 0;
 
   // Find the score for each move in each column
   for (int i_1 = 0; i_1 < 7; i_1++) {
@@ -67,86 +63,102 @@ int main(int argc, char** argv) {
       for (int i_3 = 0; i_3 < 7; i_3++) {
         for (int i_4 = 0; i_4 < 7; i_4++) {
           for (int i_5 = 0; i_5 < 7; i_5++) {
+
             std::string move = colNumbers[i_1] + colNumbers[i_2] + colNumbers[i_3] + colNumbers[i_4] + colNumbers[i_5]; // Create the move
+            int int_move = ((i_1 + 1)*10000) + ((i_2 + 1)*1000) + ((i_3 + 1)*100) + ((i_4 + 1)*10) + (i_5 + 1);
+          
+            if (int_move > 11246) {
+              std::cout << move << std::endl; // Display current move
 
-            // Convert move to bitmap 
-            int col_height[7] = {0,0,0,0,0,0,0};
-            int bitmap[42] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-            int flipped_bitmap[42] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+              int col_height[7] = {0,0,0,0,0,0,0};
+              int bitmap[42] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+              int flipped_bitmap[42] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-            // I_X = column to play in (index 0)
-            // Col_height keeps track of the height of that col
-            bitmap[i_1 + (7 * col_height[i_1])] = 1; // Add 1 to 
-            col_height[i_1] = col_height[i_1] + 1; // Increment col height
-            bitmap[i_2 + (7 * col_height[i_2])] = 2; // Add 2 to 
-            col_height[i_2] = col_height[i_2] + 1; // Increment col height
-            bitmap[i_3 + (7 * col_height[i_3])] = 1; // Add 1 to 
-            col_height[i_3] = col_height[i_3] + 1; // Increment col height
-            bitmap[i_4 + (7 * col_height[i_4])] = 2; // Add 2 to 
-            col_height[i_4] = col_height[i_4] + 1; // Increment col height
-            bitmap[i_5 + (7 * col_height[i_5])] = 1; // Add 1 to 
-            col_height[i_5] = col_height[i_5] + 1; // Increment col height
+              // I_X = column to play in (index 0)
+              // Col_height keeps track of the height of that col
+              bitmap[i_1 + (7 * col_height[i_1])] = 1; // Add 1 to 
+              col_height[i_1] = col_height[i_1] + 1; // Increment col height
+              bitmap[i_2 + (7 * col_height[i_2])] = 2; // Add 2 to 
+              col_height[i_2] = col_height[i_2] + 1; // Increment col height
+              bitmap[i_3 + (7 * col_height[i_3])] = 1; // Add 1 to 
+              col_height[i_3] = col_height[i_3] + 1; // Increment col height
+              bitmap[i_4 + (7 * col_height[i_4])] = 2; // Add 2 to 
+              col_height[i_4] = col_height[i_4] + 1; // Increment col height
+              bitmap[i_5 + (7 * col_height[i_5])] = 1; // Add 1 to 
+              col_height[i_5] = col_height[i_5] + 1; // Increment col height
 
-            // Flip the bitmap
-            for (int i = 0; i < 6; i++) {
-              for (int j = 0; j < 7; j++) {
-                flipped_bitmap[j + (i*7)] = bitmap[(j + (i*7)) + transpose_flip[j]];
-              }
-            }          
-            
-            // Convert arrays to strings
-            std::string bitmap_srt,flipped_bitmap_srt;
-            for (int j = 0; j < 42; j++) {
-              bitmap_srt = bitmap_srt + std::to_string(bitmap[j]);
-              flipped_bitmap_srt = flipped_bitmap_srt + std::to_string(flipped_bitmap[j]);
-            }
-
-            // Compare the bitmaps
-            std::string matching_move, matching_Flipped_move;
-            matching_move = readLUT_compareBitmap(bitmap_srt, 5);// Compare normal bitmap - find a matching move
-            matching_Flipped_move = readLUT_compareBitmap(flipped_bitmap_srt, 5); // Compare flipped bitmap - find a flipped matching move
-
-            // If a match is found - grab the score from relevent line
-            if (matching_Flipped_move != "X" && matching_move != "X") {both++;}
-            if (matching_move != "X") {match_count++;}
-            if (matching_Flipped_move != "X") {flip_count++;}
-
-            if (matching_move != "X") {
-              colScores = readLUT(matching_move);
-            }
-            else if (matching_Flipped_move != "X") {
-              colScores = readLUT(matching_Flipped_move);
-              std::vector<int> flippedScore = {0,0,0,0,0,0,0};
-              int j = 6;
-
-              // Flip the score
-              for (int i = 0; i < 7; i++) {
-                flippedScore[i] = colScores[j];
-                j--;
+              // Flip the bitmap
+              for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 7; j++) {
+                  flipped_bitmap[j + (i*7)] = bitmap[(j + (i*7)) + transpose_flip[j]];
+                }
+              }          
+              
+              // Convert arrays to strings
+              std::string bitmap_srt,flipped_bitmap_srt;
+              for (int j = 0; j < 42; j++) {
+                bitmap_srt = bitmap_srt + std::to_string(bitmap[j]);
+                flipped_bitmap_srt = flipped_bitmap_srt + std::to_string(flipped_bitmap[j]);
               }
 
-              // Write the flipped score into the colScores Vector
-              for (int i = 0; i < 7; i++) {
-                colScores[i] = flippedScore[i];
-              }
-            }
-            else {
-              //solver.reset(); // Reset the solver
-            }
+              // Compare the bitmaps
+              std::string matching_move, matching_Flipped_move;
+              matching_move = readLUT_compareBitmap(bitmap_srt, 5);// Compare normal bitmap - find a matching move
+              matching_Flipped_move = readLUT_compareBitmap(flipped_bitmap_srt,5); // Compare flipped bitmap - find a flipped matching move
 
-            // Write Score to file 
-            MyFile << move << " " << bitmap_srt << " [";
-            for (int i = 0; i < 6; i++) {
-              MyFile << colScores[i] << " ";
+              if (matching_move != "X") {
+                colScores = readLUT(matching_move);
+              }
+              else if (matching_Flipped_move != "X") {
+                colScores = readLUT(matching_Flipped_move);
+
+                std::vector<int> flippedScore = {0,0,0,0,0,0,0};
+                int j = 6;
+
+                // Flip the score
+                for (int i = 0; i < 7; i++) {
+                  flippedScore[i] = colScores[j];
+                  j--;
+                }
+
+                // Write the flipped score into the colScores Vector
+                for (int i = 0; i < 7; i++) {
+                  colScores[i] = flippedScore[i];
+                }
+              }
+              else {
+                // If not already found, run the move
+                solver.reset(); // Reset the solver
+                for (int i = 0; i < 7; i++) {
+                  move = move + colNumbers[i]; // Add column number to test
+
+                  Position P;
+
+                  if(P.play(move) != move.size()) { // Error Check
+                    std::cerr << "Invalid move " << (P.nbMoves()+1) << " \"" << move << "\"" << std::endl;
+                  }
+                  else {
+                    int score = solver.solve(P, weak); // Find the score of the new potential move
+                    score = - score; // Complement the score !! OUTPUT OF SOLVER IS INVERTED FOR SOME REASON
+                    colScores.insert(colScores.begin() + i, score); // Add the scores to score vector
+                  }
+                  move.pop_back(); // remove the last column number ready for the next column number to be tested
+                }
+              }
+
+              // Write Score to file 
+              MyFile << move << " " << bitmap_srt << " [";
+              for (int i = 0; i < 6; i++) {
+                MyFile << colScores[i] << " ";
+              }
+              MyFile << colScores[6] << "]" << std::endl; 
             }
-            MyFile << colScores[6] << "]" << std::endl;  
-          }        
-        } 
+          }
+        }
       }
     }
   }
   MyFile.close(); // Close the file 
-  std::cout << "Match Count: " << match_count << " Flip Count: " << flip_count << " Both: " << both << std::endl;
 }
 
 // Comparison function for sort
@@ -159,7 +171,6 @@ std::vector<int> readLUT(std::string move_to_find) {
 
   std::string LUT_str = std::to_string(LUT); // Convert LUT variable to a string
   std::string filename = "/home/project/projects/Solver_Pascal/LUT/LUT_" + LUT_str + ".txt"; // Create file name to index correct LUT
-
   std::ifstream LUT_file(filename); // Read from the text file
 
   std::string move_score;// Create a string for output of the file
@@ -220,20 +231,6 @@ std::string readLUT_compareBitmap(std::string bitMaptoCompare, int LUT) {
   return moveOutput; // Return the move that matches
 }
 
-/* Read file and Output the result
-  std::vector<int> scores;
-  scores = readLUT(""); // NOT PROTECTED AGAINST FALSE INPUTS
-
-  for (int i = 0; i < 7; i++) {
-    std::cout << scores[i] << " ";
-  }
-  std::cout << std::endl;
-*/
-/* Write to file
-   
-*/
-
-
 
 /* Solve fuction
         move = move + colNumbers[i]; // Add column number to test
@@ -250,18 +247,7 @@ std::string readLUT_compareBitmap(std::string bitMaptoCompare, int LUT) {
         }
 
         move.pop_back(); // remove the last column number ready for the next column number to be tested
-
-        
-        for (int i = 0; i < 7; i++) {
-          std::cout << colScores[i] << " ";
-        }
 */
-
-
-
-
-
-
 
 
 
