@@ -56,8 +56,8 @@ When 42 Circles Found:
 <br>
 
 # Useful links
-[Setting up C++ in VS Code on Raspberry Pi (Linux)](https://code.visualstudio.com/docs/cpp/config-linux) <br>
-[Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html) <br>
-[Connect Four Algorithm Tutorial](http://blog.gamesolver.org/) <br>
-[Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file) <br>
-[OpenCV API](https://docs.opencv.org/2.4/index.html) <br>
+- [Setting up C++ in VS Code on Raspberry Pi (Linux)](https://code.visualstudio.com/docs/cpp/config-linux) <br>
+- [Install OpenCV on Raspberry Pi](https://qengineering.eu/install%20opencv%20on%20raspberry%20pi%205.html) <br>
+- [Connect Four Algorithm Tutorial](http://blog.gamesolver.org/) <br>
+- [Connect Four Solver - Python](https://github.com/lhorrell99/connect-4-solver?tab=readme-ov-file) <br>
+- [OpenCV API](https://docs.opencv.org/2.4/index.html) <br>
