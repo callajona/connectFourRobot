@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
           for (int i_5 = 0; i_5 < 7; i_5++) {
               for (int i_6 = 0; i_6 < 7; i_6++) {
 
-              std::string move = colNumbers[i_1] + colNumbers[i_2] + colNumbers[i_3] + colNumbers[i_4] + colNumbers[i_5]; // Create the move
+              std::string move = colNumbers[i_1] + colNumbers[i_2] + colNumbers[i_3] + colNumbers[i_4] + colNumbers[i_5] + colNumbers[i_6]; // Create the move
               int int_move = ((i_1 + 1)*100000) + ((i_2 + 1)*10000) + ((i_3 + 1)*1000) + ((i_4 + 1)*100) + ((i_5 + 1)*10) + (i_6 + 1);
             
               if (int_move > 121211) {
