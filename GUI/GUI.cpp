@@ -89,6 +89,19 @@ double score_fontScale = 0.5; // Font size for scores
 int thickness = 1;
 const Scalar textColour = {0,0,0};
 
+// -------------------------------------------FSM for Difficulty Selection-------------------------------------------
+struct State {
+  int diff; // Difficulty level
+  int next_state[2]; // Next state
+};
+
+State fsm[4] = {
+  {0,{1,3}},
+  {1,{2,0}},
+  {2,{3,1}},
+  {3,{0,2}},
+};
+
 // Necessary Variables
 int gameState[42] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,2,1,0,2,0,2,2,1,1};
 std::string colNumbers[7] = {"1","2","3","4","5","6","7"}; // Column numbers as strings
@@ -284,7 +297,7 @@ int GUI_game(int pascal_col, bool Pascal_move, bool display_scores, std::vector<
   return val;
 }
 
-int GUI_difficulty_sel(int diff_sel) {
+int GUI_difficultySel_Screen(int diff_sel) {
   // -------------------------------------------Create the image-------------------------------------------
   Mat display(screen_height, screen_width, CV_8UC3, background_colour); // create empty screen - white background
 
@@ -295,31 +308,68 @@ int GUI_difficulty_sel(int diff_sel) {
 
   // -------------------------------------------Display Text-------------------------------------------
   std::string selDiff_text = {"Select Difficulty: "};
-  std::vector<std::string> diffLevels_text = {"  Easy >","< Medium >","< Hard >","< Extreme  "};
-  Size selDiff_textSize = getTextSize(selDiff_text,fontFace,text_fontScale,thickness,0); // Find the size of the text
+  std::vector<std::string> diffLevels_text = {"Easy","Medium","Hard","Extreme"};
 
+  // Display: "Select Difficulty" in the middle of the screen
+  Size selDiff_textSize = getTextSize(selDiff_text,fontFace,text_fontScale,thickness,0); // Find the size of the text
   int selDiff_text_X = (screen_width - selDiff_textSize.width) / 2; // Calculate the X offset
-  int selDiff_text_Y = screen_height * 0.25; // Fixed
+  int selDiff_text_Y = screen_height * 0.33; // Fixed
   putText(display,selDiff_text,{selDiff_text_X, selDiff_text_Y},fontFace,text_fontScale,textColour,thickness,LINE_AA,false);
 
   Size diffLevels_textSize = getTextSize(diffLevels_text[diff_sel],fontFace,text_fontScale,thickness,0); // Find the size of the text
   int diffLevels_text_X = (screen_width - diffLevels_textSize.width) / 2; // Calculate the X offset
-  int diffLevels_text_Y = screen_height * 0.5; // Fixed Y offset
+  int diffLevels_text_Y = screen_height * 0.66; // Fixed Y offset
 
   // Bounding rectangle points
-  // BR_X1 = diffLevels_text_X
-  int BR_X2 = diffLevels_text_X + diffLevels_textSize.width;
-  int BR_Y1 = (screen_height - diffLevels_textSize.height) / 2;
-  int BR_Y2 = BR_Y1 + diffLevels_textSize.height;
-  Point TL_BR = {diffLevels_text_X,BR_Y1}; // Top-Left Bounding rectangle
-  Point BR_BR = {BR_X2,BR_Y2}; // Bottom-Right Bounding Rectangle
-  cv::rectangle(display,TL_BR,BR_BR,diff_sel_colours[diff_sel],FILLED,LINE_AA,0);
-  cv::rectangle(display,TL_BR,BR_BR,diff_sel_outline_colours[diff_sel],2,LINE_AA,0);
+  int boarder = 10; // Number of pixels wider than the text 
+  int BR_X1 = diffLevels_text_X - boarder;
+  int BR_X2 = BR_X1 + diffLevels_textSize.width + (boarder * 2);
+  int BR_Y1 = diffLevels_text_Y - diffLevels_textSize.height - boarder;
+  int BR_Y2 = diffLevels_text_Y + boarder;
 
+  // Rectangle points
+  Point TL_BR = {BR_X1,BR_Y1}; // Top-Left Bounding rectangle
+  Point BR_BR = {BR_X2,BR_Y2}; // Bottom-Right Bounding Rectangle
+
+  // Draw rectangles
+  cv::rectangle(display,TL_BR,BR_BR,diff_sel_colours[diff_sel],FILLED,LINE_AA,0); // Draw filled rectangle
+  cv::rectangle(display,TL_BR,BR_BR,diff_sel_outline_colours[diff_sel],2,LINE_AA,0); // Draw boarder
+
+  // Display text
   putText(display,diffLevels_text[diff_sel],{diffLevels_text_X, diffLevels_text_Y},fontFace,text_fontScale,textColour,thickness,LINE_AA,false);
 
  //-------------------------------------------Display the Image-------------------------------------------
   cv::imshow("Display",display); 
   int val = cv::waitKey(0); // display the image
   return val;
+}
+
+int GUI_selectDifficulty() {
+  int diff = 0;
+  int keyPress;
+
+  int state = 0;
+  int direction = 0;
+
+  while (keyPress != 32) { // Space press = confirm choice
+    diff = fsm[state].diff; // Get sate
+    keyPress = GUI_difficultySel_Screen(diff);
+    if (keyPress == 97) {direction = 1;} // move down
+    else if (keyPress == 100) {direction = 0;} // move up
+    state = fsm[state].next_state[direction];
+  }
+
+  return diff;
+}
+
+void blank_backgroud() {
+  // -------------------------------------------Create the image-------------------------------------------
+  Mat display(screen_height, screen_width, CV_8UC3, background_colour); // create empty screen - white background
+
+  // Add background details
+  for (int i = 0; i < 11; i++) {
+    cv::circle(display,backbround_circle_centres[i],backbround_circle_radius[i],background_circles_colour,FILLED,LINE_8,0); // Draw background circles
+  }
+
+  imwrite("/home/project/projects/GUI/BlankBackground.jpg",display);
 }
