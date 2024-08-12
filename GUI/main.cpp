@@ -10,26 +10,15 @@
 using namespace cv;
 
 int main() {
-
-
-  int i = 1;
-  int val = GUI_difficulty_sel(i);
-
-  while (val != 32) { // Space
-    val = GUI_difficulty_sel(i);
-    if (val == 97) {i--;}
-    else if (val == 100) {i++;}
-  }
+  blank_backgroud();
+  int i = GUI_selectDifficulty();
 
   std::cout << "Level Selected " << i << std::endl;
-
-  /*
 
   std::vector<int> scores = {-4,-18,2,-1,-2,18,-4};
   std::vector<int> colRank = {6,3,4,5,1,7,2};
   GUI_game(2,1,1,scores,colRank);
 
-  int i = 3;
   int val;
 
   while ((i < 7 && i > -1)) {
